@@ -1,7 +1,7 @@
 class Dog
   attr_accessor :id, :name, :breed
 
-  def initialize(id: id, name: name, breed:breed)
+  def initialize(id:nil, name:, breed:)
     @id = id
     @name = name
     @breed = breed
@@ -34,10 +34,10 @@ class Dog
         VALUES (?,?)
       SQL
 
-      song = DB[:conn].execute(sql, self.name, self.breed)
+      dog = DB[:conn].execute(sql, self.name, self.breed)
       @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
     end
-
+    self
   end
 
   def update
@@ -45,10 +45,23 @@ class Dog
     DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 
-  def self.new_from_db(name:, breed:)
-    dog = Dog.new(name, breed)
-    # song.save
+  def self.create(name:, breed:)
+    dog = Dog.new(name:name, breed:breed)
+    dog.save
     dog
   end
 
+  def self.new_from_db(result)
+    Dog.new(id: result[0], name: result[1], breed: result[2])
+  end
+
+  def self.find_by_id(id)
+    sql = "SELECT * FROM dogs WHERE id = ?"
+    result = DB[:conn].execute(sql, id)[0]
+    Dog.new(id: result[0], name: result[1], breed: result[2])
+  end
+
+  def self.find_or_create_by
+
+  end
 end
