@@ -37,5 +37,21 @@ def self.create_table
       self
     end
   end
+  
+  def self.create(hash)
+    dog = Dog.new(hash)
+    dog.save
+    dog
+  end
+  
+  def self.new_from_db(row)
+    hash = {
+      :id => row[0],
+      :name => row[1],
+      :breed => row[2]
+    }
+    
+    self.new(hash)
+  end
 end
 
