@@ -49,12 +49,13 @@ class Dog
     
     def self.find_or_create_by(name:, breed:)
         dog = DB[:conn].execute("SELECT * FROM dogs WHERE name = ? AND breed = ? LIMIT 1", name, breed).flatten
-        if !dog.empty?
-            Dog.new(id:dog[0], name: dog[1], breed: dog[3])
+        # return value of a bad SELECT is []
+        if !dog.empty? #if dog != []
+            self.new(id:dog[0], name: dog[1], breed: dog[2])
         else
-            dog = self.create(name: name, breed: breed)
-            # binding.pry
+            self.create(name: name, breed: breed)
         end
+        #  binding.pry
     end
 
     def self.find_by_name(name)
@@ -91,3 +92,25 @@ class Dog
 
 
 end
+
+
+# def self.find_or_create_by(name:, breed:)
+#     sql = <<-SQL
+#           SELECT *
+#           FROM dogs
+#           WHERE name = ?
+#           AND breed = ?
+#           LIMIT 1
+#         SQL
+# ​
+#     dog = DB[:conn].execute(sql,name,breed)
+# ​
+#     # if !dog.empty?
+#     if dog != []
+#       dog_data = dog[0]
+#       dog = Dog.new(id: dog_data[0], name: dog_data[1], breed: dog_data[2])
+#     else
+#       dog = self.create(name: name, breed: breed)
+#     end
+#     dog
+#   end
